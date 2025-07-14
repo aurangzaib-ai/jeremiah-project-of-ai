@@ -1,0 +1,38 @@
+{
+    "ruleset_name": "Standard Underwriting Rules",
+    "version": "1.0",
+    "criteria": [
+        {
+            "name": "Minimum Credit Score",
+            "description": "Applicant must have a credit score of at least 650 to qualify.",
+            "field": "credit_score",
+            "operator": ">=",
+            "value": 650
+        },
+        {
+            "name": "Max Driving Violations",
+            "description": "Applicant must have no more than 2 driving violations in the past 3 years.",
+            "field": "driving_violations",
+            "operator": "<=",
+            "value": 2
+        },
+        {
+            "name": "Vehicle Age Limit",
+            "description": "Vehicle should not be older than 10 years for standard underwriting.",
+            "field": "vehicle_age",
+            "operator": "<=",
+            "value": 10
+        },
+        {
+            "name": "Coverage Lapse",
+            "description": "Applicant should not have a coverage lapse of more than 30 days in the past year.",
+            "field": "coverage_lapse_days",
+            "operator": "<=",
+            "value": 30
+        }
+    ],
+    "decision_logic": {
+        "accept_if_all_true": true,
+        "deny_if_any_false": true
+    }
+}

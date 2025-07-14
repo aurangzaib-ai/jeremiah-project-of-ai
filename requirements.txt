@@ -1,0 +1,10 @@
+streamlit
+python-dotenv
+openai
+langchain
+langchain-openai
+pydantic
+typing-extensions
+scipy
+numpy
+plotly

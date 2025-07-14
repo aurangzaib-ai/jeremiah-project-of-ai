@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluate Applicant - Underwriting System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-user-check text-primary me-2"></i>
+                        Evaluate Applicant
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Enter applicant information for AI-powered underwriting evaluation
+                    </p>
+                </div>
+                <a href="{{ url_for('main.quick_test') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-bolt me-2"></i>Quick Test Instead
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        
+        <div class="row">
+            <!-- Left Column - Applicant Information -->
+            <div class="col-lg-8">
+                <!-- Basic Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-id-card me-2"></i>
+                            Basic Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.applicant_id.label(class="form-label") }}
+                                {{ form.applicant_id(class="form-control" + (" is-invalid" if form.applicant_id.errors else "")) }}
+                                {% if form.applicant_id.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.applicant_id.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.territory.label(class="form-label") }}
+                                {{ form.territory(class="form-control" + (" is-invalid" if form.territory.errors else "")) }}
+                                {% if form.territory.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.territory.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.credit_score.label(class="form-label") }}
+                                {{ form.credit_score(class="form-control" + (" is-invalid" if form.credit_score.errors else "")) }}
+                                {% if form.credit_score.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.credit_score.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Credit score range: 300-850</div>
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.coverage_lapse_days.label(class="form-label") }}
+                                {{ form.coverage_lapse_days(class="form-control" + (" is-invalid" if form.coverage_lapse_days.errors else "")) }}
+                                {% if form.coverage_lapse_days.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.coverage_lapse_days.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">0 = continuous coverage</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Driver Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user me-2"></i>
+                            Primary Driver Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.driver.first_name.label(class="form-label") }}
+                                {{ form.driver.first_name(class="form-control" + (" is-invalid" if form.driver.first_name.errors else "")) }}
+                                {% if form.driver.first_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.driver.first_name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.driver.last_name.label(class="form-label") }}
+                                {{ form.driver.last_name(class="form-control" + (" is-invalid" if form.driver.last_name.errors else "")) }}
+                                {% if form.driver.last_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.driver.last_name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.driver.age.label(class="form-label") }}
+                                {{ form.driver.age(class="form-control" + (" is-invalid" if form.driver.age.errors else "")) }}
+                                {% if form.driver.age.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.driver.age.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.driver.license_state.label(class="form-label") }}
+                                {{ form.driver.license_state(class="form-control" + (" is-invalid" if form.driver.license_state.errors else "")) }}
+                                {% if form.driver.license_state.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.driver.license_state.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.driver.years_licensed.label(class="form-label") }}
+                                {{ form.driver.years_licensed(class="form-control" + (" is-invalid" if form.driver.years_licensed.errors else "")) }}
+                                {% if form.driver.years_licensed.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.driver.years_licensed.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                {{ form.driver.license_status.label(class="form-label") }}
+                                {{ form.driver.license_status(class="form-select" + (" is-invalid" if form.driver.license_status.errors else "")) }}
+                                {% if form.driver.license_status.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.driver.license_status.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coverage Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Coverage Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                {{ form.requested_coverage.label(class="form-label") }}
+                                {{ form.requested_coverage(class="form-select" + (" is-invalid" if form.requested_coverage.errors else "")) }}
+                                {% if form.requested_coverage.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.requested_coverage.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Select the type of coverage the applicant is requesting</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Configuration & Actions -->
+            <div class="col-lg-4">
+                <!-- Underwriting Configuration -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            Configuration
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {{ form.rules_file.label(class="form-label") }}
+                        {{ form.rules_file(class="form-select" + (" is-invalid" if form.rules_file.errors else "")) }}
+                        {% if form.rules_file.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.rules_file.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Choose the underwriting rules to apply for this evaluation
+                        </div>
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <strong>Rule Types:</strong><br>
+                                • <strong>Standard:</strong> Balanced approach<br>
+                                • <strong>Conservative:</strong> Stricter criteria<br>
+                                • <strong>Liberal:</strong> More lenient criteria
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card">
+                    <div class="card-body text-center">
+                        {{ form.submit(class="btn btn-primary btn-lg w-100 mb-3") }}
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('main.quick_test') }}" class="btn btn-outline-success">
+                                <i class="fas fa-bolt me-2"></i>Quick Test Instead
+                            </a>
+                            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i>Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Information -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Help & Tips
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <small class="text-muted">
+                            <strong>Evaluation Process:</strong><br>
+                            1. Fill in all required applicant information<br>
+                            2. Select appropriate underwriting rules<br>
+                            3. Submit for AI-powered evaluation<br>
+                            4. Review detailed results and reasoning<br><br>
+                            
+                            <strong>Decision Types:</strong><br>
+                            • <span class="badge bg-success">Accept</span> - Approved for coverage<br>
+                            • <span class="badge bg-danger">Deny</span> - Application rejected<br>
+                            • <span class="badge bg-warning">Adjudicate</span> - Manual review required
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add form validation feedback
+    const form = document.querySelector('form');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    
+    // Add loading state to submit button
+    form.addEventListener('submit', function() {
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Evaluating...';
+        submitBtn.disabled = true;
+    });
+    
+    // Credit score range indicator
+    const creditScoreInput = document.querySelector('#credit_score');
+    if (creditScoreInput) {
+        creditScoreInput.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            const parent = this.parentElement;
+            let indicator = parent.querySelector('.credit-indicator');
+            
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.className = 'credit-indicator mt-1';
+                parent.appendChild(indicator);
+            }
+            
+            if (value >= 750) {
+                indicator.innerHTML = '<small class="text-success"><i class="fas fa-check-circle me-1"></i>Excellent Credit</small>';
+            } else if (value >= 700) {
+                indicator.innerHTML = '<small class="text-info"><i class="fas fa-info-circle me-1"></i>Good Credit</small>';
+            } else if (value >= 650) {
+                indicator.innerHTML = '<small class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Fair Credit</small>';
+            } else if (value >= 300) {
+                indicator.innerHTML = '<small class="text-danger"><i class="fas fa-times-circle me-1"></i>Poor Credit</small>';
+            } else {
+                indicator.innerHTML = '';
+            }
+        });
+        
+        // Trigger on page load
+        creditScoreInput.dispatchEvent(new Event('input'));
+    }
+    
+    // Coverage lapse warning
+    const coverageLapseInput = document.querySelector('#coverage_lapse_days');
+    if (coverageLapseInput) {
+        coverageLapseInput.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            const parent = this.parentElement;
+            let warning = parent.querySelector('.lapse-warning');
+            
+            if (value > 30 && value <= 90) {
+                if (!warning) {
+                    warning = document.createElement('div');
+                    warning.className = 'lapse-warning mt-1';
+                    parent.appendChild(warning);
+                }
+                warning.innerHTML = '<small class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Coverage lapse may affect rates</small>';
+            } else if (value > 90) {
+                if (!warning) {
+                    warning = document.createElement('div');
+                    warning.className = 'lapse-warning mt-1';
+                    parent.appendChild(warning);
+                }
+                warning.innerHTML = '<small class="text-danger"><i class="fas fa-times-circle me-1"></i>Extended lapse may result in denial</small>';
+            } else if (warning) {
+                warning.remove();
+            }
+        });
+        
+        // Trigger on page load
+        coverageLapseInput.dispatchEvent(new Event('input'));
+    }
+});
+</script>
+{% endblock %}
+

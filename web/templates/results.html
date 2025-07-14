@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluation Results - Underwriting System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Results Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="result-card card {{ result.decision.value.lower() }}">
+                <div class="result-header {{ result.decision.value.lower() }}">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                {% if result.decision.value == 'ACCEPT' %}
+                                    <i class="fas fa-check-circle me-2"></i>Application Approved
+                                {% elif result.decision.value == 'DENY' %}
+                                    <i class="fas fa-times-circle me-2"></i>Application Denied
+                                {% else %}
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Manual Review Required
+                                {% endif %}
+                            </h2>
+                            <p class="mb-0 opacity-90">
+                                Applicant ID: {{ applicant.applicant_id }} | 
+                                Evaluated: {{ result.timestamp.strftime('%B %d, %Y at %I:%M %p') }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <span class="result-badge badge 
+                                {% if result.decision.value == 'ACCEPT' %}bg-success
+                                {% elif result.decision.value == 'DENY' %}bg-danger
+                                {% else %}bg-warning{% endif %}">
+                                {{ result.decision.value }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-brain me-2"></i>AI Analysis Summary
+                            </h5>
+                            <p class="lead">{{ result.reason }}</p>
+                            
+                            {% if result.risk_factors %}
+                            <div class="mt-4">
+                                <h6 class="text-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Risk Factors Identified
+                                </h6>
+                                <ul class="list-unstyled">
+                                    {% for factor in result.risk_factors %}
+                                    <li class="mb-1">
+                                        <i class="fas fa-arrow-right text-muted me-2"></i>{{ factor }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <h6 class="text-muted mb-3">Triggered Rules</h6>
+                            {% if result.triggered_rules %}
+                                {% for rule in result.triggered_rules %}
+                                <span class="badge bg-secondary me-1 mb-1">{{ rule }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted">No specific rules triggered</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applicant Details -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Applicant Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <strong>Name:</strong><br>
+                            <span class="text-muted">{{ applicant.primary_driver.first_name }} {{ applicant.primary_driver.last_name }}</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Age:</strong><br>
+                            <span class="text-muted">{{ applicant.primary_driver.age }} years old</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>License Status:</strong><br>
+                            <span class="badge bg-{{ 'success' if applicant.primary_driver.license_status.value == 'VALID' else 'warning' }}">
+                                {{ applicant.primary_driver.license_status.value.replace('_', ' ').title() }}
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Years Licensed:</strong><br>
+                            <span class="text-muted">{{ applicant.primary_driver.years_licensed }} years</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>License State:</strong><br>
+                            <span class="text-muted">{{ applicant.primary_driver.license_state }}</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Territory:</strong><br>
+                            <span class="text-muted">{{ applicant.territory }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Risk Assessment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <strong>Credit Score:</strong>
+                            <div class="d-flex align-items-center mt-1">
+                                <div class="progress flex-grow-1 me-3" style="height: 20px;">
+                                    <div class="progress-bar 
+                                        {% if applicant.credit_score >= 750 %}bg-success
+                                        {% elif applicant.credit_score >= 700 %}bg-info
+                                        {% elif applicant.credit_score >= 650 %}bg-warning
+                                        {% else %}bg-danger{% endif %}" 
+                                    </div>
+                                </div>
+                                <strong>{{ applicant.credit_score }}</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="col-6">
+                            <strong>Coverage Lapse:</strong><br>
+                            {% if applicant.coverage_lapse_days == 0 %}
+                                <span class="badge bg-success">Continuous Coverage</span>
+                            {% elif applicant.coverage_lapse_days <= 30 %}
+                                <span class="badge bg-warning">{{ applicant.coverage_lapse_days }} days</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ applicant.coverage_lapse_days }} days</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-6">
+                            <strong>Requested Coverage:</strong><br>
+                            <span class="text-muted">{{ applicant.requested_coverage.replace('_', ' ').title() }}</span>
+                        </div>
+                        
+                        <div class="col-6">
+                            <strong>Violations:</strong><br>
+                            <span class="badge bg-{{ 'success' if applicant.primary_driver.violations|length == 0 else 'warning' }}">
+                                {{ applicant.primary_driver.violations|length }} violations
+                            </span>
+                        </div>
+                        
+                        <div class="col-6">
+                            <strong>Claims History:</strong><br>
+                            <span class="badge bg-{{ 'success' if applicant.primary_driver.claims|length == 0 else 'warning' }}">
+                                {{ applicant.primary_driver.claims|length }} claims
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vehicle Information -->
+    {% if applicant.vehicles %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-car me-2"></i>Vehicle Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Make</th>
+                                    <th>Model</th>
+                                    <th>Type</th>
+                                    <th>VIN</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vehicle in applicant.vehicles %}
+                                <tr>
+                                    <td>{{ vehicle.year }}</td>
+                                    <td>{{ vehicle.make }}</td>
+                                    <td>{{ vehicle.model }}</td>
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            {{ vehicle.vehicle_type.value.replace('_', ' ').title() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <code>{{ vehicle.vin if vehicle.vin else 'Not provided' }}</code>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Violations and Claims -->
+    {% if applicant.primary_driver.violations or applicant.primary_driver.claims %}
+    <div class="row mb-4">
+        {% if applicant.primary_driver.violations %}
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        Violations ({{ applicant.primary_driver.violations|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for violation in applicant.primary_driver.violations %}
+                    <div class="border-start border-warning border-3 ps-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ violation.violation_type.value.replace('_', ' ').title() }}</strong>
+                                <br>
+                                <small class="text-muted">{{ violation.date.strftime('%B %d, %Y') }}</small>
+                                {% if violation.description %}
+                                <br>
+                                <span class="text-muted">{{ violation.description }}</span>
+                                {% endif %}
+                            </div>
+                            <span class="badge bg-warning">{{ violation.violation_type.value }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if applicant.primary_driver.claims %}
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-invoice-dollar text-info me-2"></i>
+                        Claims History ({{ applicant.primary_driver.claims|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% for claim in applicant.primary_driver.claims %}
+                    <div class="border-start border-info border-3 ps-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ claim.claim_type.value.replace('_', ' ').title() }}</strong>
+                                <br>
+                                <small class="text-muted">{{ claim.date.strftime('%B %d, %Y') }}</small>
+                                <br>
+                                <span class="text-success">${{ "{:,.2f}".format(claim.amount) }}</span>
+                                {% if claim.at_fault %}
+                                <span class="badge bg-danger ms-2">At Fault</span>
+                                {% endif %}
+                            </div>
+                            <span class="badge bg-info">{{ claim.claim_type.value }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h5 class="mb-3">What would you like to do next?</h5>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="{{ url_for('main.evaluate') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Evaluate Another Applicant
+                        </a>
+                        <a href="{{ url_for('main.quick_test') }}" class="btn btn-success">
+                            <i class="fas fa-bolt me-2"></i>Run Quick Tests
+                        </a>
+                        <a href="{{ url_for('main.ab_test') }}" class="btn btn-warning">
+                            <i class="fas fa-chart-line me-2"></i>A/B Testing
+                        </a>
+                        <button onclick="window.print()" class="btn btn-outline-secondary">
+                            <i class="fas fa-print me-2"></i>Print Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate the result card on load
+    const resultCard = document.querySelector('.result-card');
+    if (resultCard) {
+        resultCard.style.opacity = '0';
+        resultCard.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            resultCard.style.transition = 'all 0.6s ease';
+            resultCard.style.opacity = '1';
+            resultCard.style.transform = 'translateY(0)';
+        }, 100);
+    }
+    
+    // Add copy functionality for applicant ID
+    const applicantId = '{{ applicant.applicant_id }}';
+    
+    // Add tooltip to result badge
+    const resultBadge = document.querySelector('.result-badge');
+    if (resultBadge) {
+        resultBadge.title = 'Decision: {{ result.decision.value }} - Click for details';
+        resultBadge.style.cursor = 'pointer';
+        
+        resultBadge.addEventListener('click', function() {
+            const details = `
+Decision: {{ result.decision.value }}
+Reason: {{ result.reason }}
+Timestamp: {{ result.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+Triggered Rules: {{ result.triggered_rules|join(', ') if result.triggered_rules else 'None' }}
+            `.trim();
+            
+            navigator.clipboard.writeText(details).then(() => {
+                // Show temporary success message
+                const originalText = this.textContent;
+                this.textContent = 'Copied!';
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 1000);
+            });
+        });
+    }
+    
+    // Animate progress bars
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        
+        setTimeout(() => {
+            bar.style.transition = 'width 1s ease-in-out';
+            bar.style.width = width;
+        }, 500);
+    });
+});
+</script>
+{% endblock %}
